@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level 18 Unlocked</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600&family=Dancing+Script:wght@700&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --romantic-rose: #ff6b81;
+            --warm-gold: #f7d794;
+            --bg-dark: #0f0f15;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle, #1e1e2e 0%, var(--bg-dark) 100%);
+            font-family: 'Outfit', sans-serif;
+            color: #fdfcfc;
+            overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.3; }
+
+        .main-container {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(247, 215, 148, 0.1);
+            border-radius: 30px;
+            width: 85%;
+            max-width: 450px;
+            height: 550px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            padding: 25px;
+        }
+
+        /* --- STAGE 1: THE KICK ANIMATION --- */
+        .stage-box { text-align: center; width: 100%; position: relative; height: 300px; display: flex; align-items: center; justify-content: center;}
+
+        .candle-core {
+            width: 10px; height: 50px;
+            background: linear-gradient(to top, var(--warm-gold), #fff);
+            border-radius: 5px; position: relative;
+            box-shadow: 0 0 15px var(--warm-gold);
+        }
+
+        .flame {
+            width: 16px; height: 28px;
+            background: radial-gradient(circle, #fff, var(--romantic-rose), transparent);
+            border-radius: 50% 50% 20% 20%;
+            position: absolute; top: -32px; left: -3px;
+            box-shadow: 0 0 20px var(--romantic-rose);
+            animation: flicker 0.1s infinite alternate;
+        }
+
+        @keyframes flicker { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
+
+        .number {
+            font-family: 'Syncopate', sans-serif;
+            font-size: 6rem;
+            position: absolute;
+            font-weight: 700;
+        }
+
+        #num-17 { color: rgba(255,255,255,0.2); opacity: 0; }
+        #num-18 { color: var(--warm-gold); text-shadow: 0 0 30px var(--warm-gold); opacity: 0; z-index: 10; }
+
+        /* THE KICK ANIMATIONS */
+        .kick-out-17 { animation: exit17 0.5s forwards ease-in; }
+        .enter-18 { animation: enter18 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+        @keyframes enter18 {
+            0% { opacity: 0; transform: scale(3) translateX(100px); filter: blur(10px); }
+            100% { opacity: 1; transform: scale(1) translateX(0); filter: blur(0); }
+        }
+
+        @keyframes exit17 {
+            0% { opacity: 1; transform: translateX(0) rotate(0); }
+            100% { opacity: 0; transform: translateX(-300px) rotate(-45deg); }
+        }
+
+        #happy-text {
+            font-family: 'Syncopate', sans-serif;
+            font-size: 1.2rem;
+            color: var(--romantic-rose);
+            margin-top: 140px;
+            opacity: 0;
+            letter-spacing: 5px;
+            position: absolute;
+        }
+
+        /* --- STAGE 2: THE STORY --- */
+        .story-page { display: none; flex-direction: column; justify-content: space-between; height: 85%; animation: slideIn 0.8s forwards ease-out; width: 100%; }
+        .story-page.active { display: flex; }
+        @keyframes slideIn { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+
+        h2 { font-family: 'Dancing Script', cursive; font-size: 2.2rem; color: var(--warm-gold); text-align: center; margin-bottom: 10px; }
+        .content { font-size: 1.05rem; line-height: 1.7; font-weight: 300; }
+        .poem { border-left: 2px solid var(--warm-gold); padding-left: 15px; margin: 15px 0; font-style: italic; color: var(--warm-gold); }
+
+        .btn-next {
+            background: transparent; color: var(--warm-gold); border: 1px solid var(--warm-gold);
+            padding: 12px 30px; border-radius: 50px; cursor: pointer; align-self: center;
+            transition: 0.3s; font-weight: 600; text-transform: uppercase; font-size: 0.8rem;
+        }
+        .btn-next:hover { background: var(--warm-gold); color: var(--bg-dark); }
+
+        .progress-dots { position: absolute; top: 25px; display: flex; gap: 8px; width: 80%; }
+        .dot { height: 3px; background: rgba(255, 255, 255, 0.1); flex: 1; border-radius: 10px; overflow: hidden; }
+        .dot-fill { height: 100%; background: var(--romantic-rose); width: 0%; transition: width 0.4s; }
+
+        .hidden { display: none !important; }
+
+        /* 🎵 Invisible Player Style */
+        #youtube-player { 
+            position: absolute; 
+            width: 1px; 
+            height: 1px; 
+            top: -100px; 
+            left: -100px; 
+            opacity: 0.01; 
+            pointer-events: none; 
+        }
+    </style>
+</head>
+<body>
+
+    <div id="youtube-player"></div>
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="main-container">
+        
+        <div id="intro-stage" class="stage-box">
+            <div id="candle-wrap">
+                <div class="candle-core"><div class="flame" id="flame"></div></div>
+            </div>
+            
+            <div id="num-17" class="number">17</div>
+            <div id="num-18" class="number">18</div>
+            <div id="happy-text">HAPPY 18TH</div>
+
+            <button class="btn-next" id="startBtn" onclick="kickSequence()" style="position: absolute; bottom: -50px; border-color: var(--romantic-rose); color: var(--romantic-rose);">Blow & Level Up</button>
+        </div>
+
+        <div id="story-container" class="hidden" style="width: 100%; height: 100%;">
+            <div class="progress-dots">
+                <div class="dot"><div class="dot-fill" id="f-0"></div></div>
+                <div class="dot"><div class="dot-fill" id="f-1"></div></div>
+                <div class="dot"><div class="dot-fill" id="f-2"></div></div>
+                <div class="dot"><div class="dot-fill" id="f-3"></div></div>
+            </div>
+
+            <div class="story-page active" id="p-0">
+                <h2>Happy Birthday, my love ❤️</h2>
+                <div class="content">
+                    On this special day, I just want to remind you how <b>incredibly important</b> you are to me. 
+                    You’re not just my girlfriend — you’re my safe place, my happiness, and the most beautiful part of my life.
+                </div>
+                <button class="btn-next" onclick="go(1)">Next</button>
+            </div>
+
+            <div class="story-page" id="p-1">
+                <h2>From My Heart</h2>
+                <div class="content">
+                    I know I’ve hurt you at times. I know there were moments when I made you sad, and for that, I’m truly sorry. 
+                    But please believe me: my love for you has always been real, deep, and constant. 
+                    I’m still learning, still growing, and trying to be a better man for you.
+                </div>
+                <button class="btn-next" onclick="go(2)">Continue</button>
+            </div>
+
+            <div class="story-page" id="p-2">
+                <h2>My Promise</h2>
+                <div class="content">
+                    <div class="poem">
+                        In your smile, I find my peace,<br>
+                        In your eyes, my future shines.<br>
+                        Even when the road feels rough,<br>
+                        I’ll hold your hand through all our times.
+                    </div>
+                    I hope we continue to grow together — to understand each other better, to forgive faster.
+                </div>
+                <button class="btn-next" onclick="go(3)">Final Page</button>
+            </div>
+
+            <div class="story-page" id="p-3">
+                <h2>Forever Choice</h2>
+                <div class="content">
+                    We may argue, we may misunderstand sometimes, but I hope at the end of every day, <b>we choose each other</b>. 
+                    I love you more than I sometimes know how to express.
+                    <br><br>
+                    <center><b style="color:var(--romantic-rose)">Happy 18th Birthday, my world. 💖</b></center>
+                </div>
+                <button class="btn-next" onclick="finalConfetti()">Finish ❤️</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 🎵 YOUTUBE API LOGIC (START AT 0:30) ---
+        var player;
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-player', {
+                height: '1',
+                width: '1',
+                videoId: 'dIXkFnjz0IE',
+                playerVars: {
+                    'start': 30, // Start at 30 seconds
+                    'autoplay': 0,
+                    'controls': 0,
+                    'disablekb': 1,
+                    'fs': 0,
+                    'modestbranding': 1,
+                    'playsinline': 1,
+                    'rel': 0
+                },
+                events: {
+                    'onReady': function(event) {
+                        console.log("Player ready");
+                    }
+                }
+            });
+        }
+
+        // BG Animation
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let dots = [];
+        function init() {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            dots = []; for(let i=0; i<40; i++) dots.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, s:Math.random()*1.5, v:Math.random()*0.1});
+        }
+        function animate() {
+            ctx.clearRect(0,0,canvas.width, canvas.height); ctx.fillStyle="#fff";
+            dots.forEach(d => { ctx.beginPath(); ctx.arc(d.x, d.y, d.s, 0, Math.PI*2); ctx.fill(); d.y-=d.v; if(d.y<0) d.y=canvas.height; });
+            requestAnimationFrame(animate);
+        }
+        init(); animate();
+
+        function kickSequence() {
+            // Play music starting from 30s
+            if (player && player.playVideo) {
+                player.seekTo(30);
+                player.playVideo();
+                player.setVolume(100);
+            }
+
+            const flame = document.getElementById('flame');
+            const candle = document.getElementById('candle-wrap');
+            const n17 = document.getElementById('num-17');
+            const n18 = document.getElementById('num-18');
+            const happy = document.getElementById('happy-text');
+            const btn = document.getElementById('startBtn');
+
+            btn.style.display = 'none';
+
+            // 1. Blow Out
+            flame.style.transition = "0.3s";
+            flame.style.opacity = "0";
+            flame.style.transform = "scale(0)";
+
+            setTimeout(() => {
+                candle.style.display = 'none';
+                // 2. Show 17
+                n17.style.opacity = "1";
+                
+                setTimeout(() => {
+                    // 3. 18 Kicks 17!
+                    n18.classList.add('enter-18');
+                    n17.classList.add('kick-out-17');
+
+                    setTimeout(() => {
+                        // 4. Happy Text Fades in
+                        happy.style.transition = "1s";
+                        happy.style.opacity = "1";
+                        happy.style.transform = "translateY(-10px)";
+                        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#ff6b81', '#f7d794'] });
+
+                        // 5. Switch to Story
+                        setTimeout(() => {
+                            document.getElementById('intro-stage').style.opacity = '0';
+                            setTimeout(() => {
+                                document.getElementById('intro-stage').classList.add('hidden');
+                                document.getElementById('story-container').classList.remove('hidden');
+                                updateDot(0);
+                            }, 500);
+                        }, 2500);
+                    }, 600);
+                }, 800);
+            }, 400);
+        }
+
+        let curr = 0;
+        function go(n) {
+            document.getElementById(`p-${curr}`).classList.remove('active');
+            document.getElementById(`p-${n}`).classList.add('active');
+            curr = n;
+            updateDot(n);
+        }
+
+        function updateDot(n) { document.getElementById(`f-${n}`).style.width = "100%"; }
+
+        function finalConfetti() {
+            confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }, colors: ['#ff6b81', '#f7d794'] });
+        }
+    </script>
+</body>
+</html>
